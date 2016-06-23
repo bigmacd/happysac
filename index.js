@@ -21,13 +21,37 @@ var secondMessage = ['sweet',
 
 var controller = Botkit.slackbot();
 
-controller.hears(["nice", "Nice", "awesome","Awesome", "cool", "Cool", "neat", "Neat", "sweet", "Sweet", / ^.{0,}happysac.{0,}$/],["direct_message","direct_mention","mention","ambient"],function(bot,message) {
+controller.hears(["Narayan", "narayan", "nice", "Nice", "awesome","Awesome", "cool", "Cool", "neat", "Neat", "sweet", "Sweet", / ^.{0,}happysac.{0,}$/],["direct_message","direct_mention","mention","ambient"],function(bot,message) {
   // do something to respond to message
   // all of the fields available in a normal Slack message object are available
   // https://api.slack.com/events/message
-    answer(message);
+    // extract the user ids
+    if (/\b[n|N]arayan\b/.test(message.text)) {
+        bot.reply(message, 'We love that guy!');
+    }
+    var userIds = extractUserIds(message);
+    for (id in userIds) {
+        answer(message, userIds[id]);
+    }
 });
 
+
+var extractUserIds = function(message) {
+    // first find the user mentioned
+    var userIds = [];
+    var text = message.text;
+    var pos = 0;
+    var pos2 = 0;
+    while ((pos = text.indexOf('<@', pos)) != -1) {
+        pos += 2;
+
+        // find the ">"
+        pos2 = text.indexOf(">", pos2);
+        userIds.push(text.slice(pos, pos2));
+        pos2 += 1;
+    }
+    return userIds;
+}
 
 var bot = controller.spawn({
   token: require('./config').token
@@ -55,19 +79,8 @@ function gotData(message, username) {
 }
 
 
-function answer(message) {
+function answer(message, userId) {
 
-  // first find the user mentioned
-  var text = message.text;
-  var pos = text.indexOf('<@');
-  if (-1 == pos) return;
-  pos += 2;
-
-  // find the ">"
-  var pos2 = text.indexOf(">");
-  if (-1 == pos2) return;
-
-  var userId = text.slice(pos, pos2);
   headers = {
     'Content-Type':'application/json'
   };
