@@ -54,7 +54,8 @@ var extractUserIds = function(message) {
 }
 
 var bot = controller.spawn({
-  token: require('./config').token
+//  token: require('./config').token
+    token: process.env.token
 });
 
 
