@@ -88,7 +88,7 @@ function answer(message, userId) {
 
   var options = {
     host: 'slack.com',
-    path: '/api/users.info?user=' + userId + '&token=' + require('./config').token,
+    path: '/api/users.info?user=' + userId + '&token=' + process.env.token,
     method: 'GET',
     headers: headers
   };
